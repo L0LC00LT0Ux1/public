@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
 <title>MyMusic</title>
 <style>
 :root{--bg:#000;--bg-2:#0a0a0a;--card:#111;--card-2:#1a1a1a;--line:rgba(255,255,255,0.08);--line-2:rgba(255,255,255,0.16);--text:#fff;--sub:#888;--sub-2:#555;--accent:#fff;--accent-2:#c8c8c8;--on-accent:#000;--accent-glow:rgba(255,255,255,0.15);}
@@ -122,9 +123,11 @@ button.danger{background:transparent;color:var(--text);border:1px solid rgba(255
 #miniPlayer .mi{flex:1;min-width:0;cursor:pointer;padding:2px 0;}
 #miniPlayer .mi .t{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25;}
 #miniPlayer .mi .s{font-size:11px;color:var(--sub);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
-#miniPlayer .mb{width:34px;height:34px;flex-shrink:0;padding:0;margin:0;border-radius:50%;background:transparent;color:var(--text);border:none;display:flex;align-items:center;justify-content:center;}
+#miniPlayer .mb{width:34px;height:34px;flex-shrink:0;padding:0;margin:0;border-radius:50%;background:transparent;color:var(--text);border:none;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+#miniPlayer .mb:hover{background:rgba(255,255,255,0.08);}
 #miniPlayer .mb svg{width:16px;height:16px;}
 #miniPlayer .mb.play{background:var(--accent);color:var(--on-accent);}
+#miniPlayer .mb.prev,#miniPlayer .mb.next{background:rgba(255,255,255,0.05);border:1px solid var(--line-2);}
 #miniPlayer .progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--line);overflow:hidden;cursor:pointer;}
 #miniPlayer .progress > div{height:100%;width:0%;background:var(--accent);transition:width .15s linear;pointer-events:none;}
 #miniPlayer .mpTime{position:absolute;bottom:4px;font-size:9px;color:var(--sub);font-weight:600;pointer-events:none;}
@@ -148,8 +151,8 @@ button.danger{background:transparent;color:var(--text);border:1px solid rgba(255
 [data-theme="light"] #plProgBar{background:rgba(0,0,0,0.15);}
 #plProgFill{height:100%;width:0%;background:var(--accent);border-radius:100px;pointer-events:none;transition:width .1s linear;}
 #plTimeRow{display:flex;justify-content:space-between;margin-top:8px;font-size:11.5px;color:var(--sub);font-weight:600;}
-.playerBtns{display:flex;gap:16px;align-items:center;margin-top:16px;}
-.playerBtns button{width:52px;height:52px;padding:0;border-radius:50%;background:var(--card);color:var(--text);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;}
+.playerBtns{display:flex;gap:8px;align-items:center;margin-top:16px;}
+.playerBtns button{width:52px;height:52px;padding:0;border-radius:50%;background:var(--card);color:var(--text);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .playerBtns button svg{width:20px;height:20px;}
 .playerBtns button.big{width:68px;height:68px;background:var(--accent);color:var(--on-accent);border:none;}
 .playerBtns button.big svg{width:26px;height:26px;}
@@ -192,14 +195,6 @@ label.filelabel svg{width:18px;height:18px;}
 .followBtn{padding:10px 20px;border-radius:20px;width:auto;font-size:13px;}
 hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
 .emailBox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:8px;}
-.emailStatus{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;}
-.emailStatus .emIcon{width:32px;height:32px;border-radius:50%;background:var(--card-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.emailStatus .emIcon svg{width:16px;height:16px;}
-.emailStatus.ok .emIcon{background:rgba(79,195,247,0.2);color:#4fc3f7;}
-.emailStatus.gold .emIcon{background:rgba(255,215,0,0.2);color:#ffd700;}
-.emailStatus .emTxt{flex:1;min-width:0;}
-.emailStatus .emMain{font-weight:700;word-break:break-all;}
-.emailStatus .emSub{font-size:11.5px;color:var(--sub);font-weight:500;margin-top:2px;}
 .historyList{display:flex;flex-wrap:wrap;gap:8px;}
 .historyChip{display:inline-flex;align-items:center;gap:6px;padding:7px 6px 7px 14px;background:var(--card);border:1px solid var(--line);border-radius:100px;font-size:12.5px;font-weight:600;color:var(--text);cursor:pointer;width:auto;margin:0;max-width:100%;}
 .historyChip .hcName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px;}
@@ -209,7 +204,7 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
 ::-webkit-scrollbar{width:0;height:0;}
 
 /* ==== DELETE MODAL ==== */
-#deleteModal{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:100;display:none;align-items:center;justify-content:center;padding:24px;}
+#deleteModal{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:100;display:none;align-items:center;justify-content:center;padding:24px;}
 #deleteModal.active{display:flex;animation:fadeIn .2s;}
 #deleteModal .dcard{background:var(--bg-2);border:1px solid var(--line-2);border-radius:24px;padding:28px 24px 20px;max-width:400px;width:100%;text-align:center;animation:deleteIn .35s cubic-bezier(.4,0,.2,1);box-shadow:0 30px 60px -20px rgba(0,0,0,0.9),0 0 0 1px rgba(255,80,80,0.15);}
 @keyframes deleteIn{from{opacity:0;transform:scale(.85) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
@@ -218,18 +213,17 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
 @keyframes trashPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
 @keyframes trashRing{0%{opacity:0.7;transform:scale(1);}100%{opacity:0;transform:scale(1.4);}}
 #deleteModal .trashIcon svg{width:34px;height:34px;color:#ff3b30;filter:drop-shadow(0 0 10px rgba(255,59,48,0.8));}
-#deleteModal h3{margin:0 0 6px;font-size:21px;font-weight:800;color:var(--text);text-transform:none;letter-spacing:-0.02em;display:block;}
-#deleteModal .delSub{font-size:13px;color:var(--sub);margin:0 0 18px;line-height:1.5;}
+#deleteModal h3{margin:0 0 6px;font-size:21px;font-weight:800;color:var(--text);text-transform:none;display:block;}
+#deleteModal .delSub{font-size:13px;color:var(--sub);margin:0 0 18px;}
 #deleteModal .delSong{background:var(--card);border:1px solid var(--line-2);border-radius:14px;padding:12px;display:flex;align-items:center;gap:12px;margin-bottom:20px;text-align:left;}
 #deleteModal .delSong img{width:48px;height:48px;border-radius:10px;object-fit:cover;background:var(--card-2);flex-shrink:0;}
 #deleteModal .delSong .dInfo{flex:1;min-width:0;}
 #deleteModal .delSong .dTitle{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);}
-#deleteModal .delSong .dMeta{font-size:11.5px;color:var(--sub);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#deleteModal .delSong .dMeta{font-size:11.5px;color:var(--sub);margin-top:3px;}
 #deleteModal .delBtns{display:flex;gap:10px;}
 #deleteModal .delBtns button{flex:1;margin:0;padding:14px;font-size:14px;}
-#deleteModal .delDanger{background:linear-gradient(135deg,#ff3b30,#c81e1e);color:#fff;font-weight:700;border:none;box-shadow:0 8px 24px -8px rgba(255,59,48,0.6);}
-#deleteModal .delDanger:active{transform:scale(.96);}
-#deleteModal .delDanger:disabled{opacity:0.6;cursor:not-allowed;}
+#deleteModal .delDanger{background:linear-gradient(135deg,#ff3b30,#c81e1e);color:#fff;font-weight:700;border:none;}
+#deleteModal .delDanger:disabled{opacity:0.6;}
 </style>
 </head>
 <body>
@@ -354,8 +348,6 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
         <div><b id="pf_following">0</b><span>กำลังติดตาม</span></div>
       </div>
       <button class="ghost" onclick="showFollowingList()">ดูรายชื่อที่กำลังติดตาม</button>
-      <h3>อีเมล</h3>
-      <div id="emailBox"></div>
       <h3>พรีเมี่ยม</h3>
       <div id="premiumStatus"></div>
       <button class="crownBtn" onclick="openPremium()">
@@ -394,9 +386,9 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
       <div class="t" id="mp_title">-</div>
       <div class="s" id="mp_uploader">-</div>
     </div>
+    <button class="mb prev" onclick="playPrev()" title="ก่อนหน้า"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM18 5l-10 7 10 7V5z"/></svg></button>
     <button class="mb play" id="mp_playBtn" onclick="miniTogglePlay()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-    <button class="mb" onclick="downloadSong()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
-    <button class="mb" onclick="miniNext()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5l10 7-10 7V5zM17 5h2v14h-2z"/></svg></button>
+    <button class="mb next" onclick="miniNext()" title="ถัดไป"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5l10 7-10 7V5zM17 5h2v14h-2z"/></svg></button>
     <div class="progress" onclick="seekMini(event)"><div id="mp_progress"></div></div>
     <div class="mpTime left" id="mp_tLeft">0:00</div>
     <div class="mpTime right" id="mp_tRight">0:00</div>
@@ -429,10 +421,12 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
     </div>
     <div class="playerBtns">
       <button onclick="toggleLoopMode()" id="pl_loopBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></button>
+      <button onclick="playPrev()" title="ก่อนหน้า"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM18 5l-10 7 10 7V5z"/></svg></button>
       <button class="big" onclick="togglePlay()" id="pl_playBtn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+      <button onclick="playNext()" title="ถัดไป"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5l10 7-10 7V5zM17 5h2v14h-2z"/></svg></button>
       <button onclick="toggleLike()" id="pl_likeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
     </div>
-    <audio id="audioEl" style="display:none"></audio>
+    <audio id="audioEl" style="display:none" preload="auto"></audio>
   </div>
 
   <div id="menu"><div class="sheet">
@@ -552,7 +546,7 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
 <div id="toastBox"></div>
 
 <script>
-let USERS={},SONGS={},MY=localStorage.getItem('mm_session')||'',currentSongId=null,loopMode=true,currentSort='new',pendingSongId=null,editCoverFile=null,editBgFile=null,emailVerifyPending=null,adminSearchQuery='';
+let USERS={},SONGS={},MY=localStorage.getItem('mm_session')||'',currentSongId=null,loopMode=true,currentSort='new',pendingSongId=null,editCoverFile=null,editBgFile=null,adminSearchQuery='';
 let myEmailInfo={ok:false,isAdmin:false,isPremium:false,premiumUntil:0,nameColor:'',uploadsToday:0,uploadLimit:5,lastUploadAt:0,cooldownMs:300000};
 let LANG=localStorage.getItem('mm_lang')||'th';
 const CLIENT_ADMIN_NAME='T0Ux1';
@@ -661,6 +655,7 @@ async function doLogin(){
 function logout(){
   localStorage.removeItem('mm_session');MY='';
   $('audioEl').pause();hideMini();currentSongId=null;
+  if('mediaSession' in navigator) try{navigator.mediaSession.playbackState='none';}catch(e){}
   authScreen.style.display='flex';navbar.style.display='none';
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   showLogin();toast('ออกจากระบบแล้ว','info');
@@ -702,36 +697,6 @@ async function forgotVerify(){
   MY=r.username;localStorage.setItem('mm_session',MY);
   closeForgot();toast('เข้าสู่ระบบสำเร็จ','success');
   await enterApp();
-}
-async function renderEmailBox(){
-  const box=$('emailBox');
-  if(!myEmailInfo.ok){box.innerHTML='<div class="emailBox"><div class="small">—</div></div>';return;}
-  if(myEmailInfo.emailVerified){
-    box.innerHTML='<div class="emailBox"><div class="emailStatus ok"><div class="emIcon">'+ICON_VERIFIED+'</div><div class="emTxt"><div class="emMain">'+escapeHTML(myEmailInfo.email)+'</div><div class="emSub">ยืนยันแล้ว</div></div></div></div>';
-    return;
-  }
-  if(emailVerifyPending){
-    box.innerHTML='<div class="emailBox"><div class="small" style="margin-bottom:8px">ส่งรหัสไปที่ <b>'+escapeHTML(emailVerifyPending)+'</b></div><input id="ev_code" placeholder="รหัส 6 หลัก" maxlength="6" inputmode="numeric"><button class="primary" onclick="verifyEmailCode()">ยืนยันอีเมล</button><button class="ghost" onclick="emailVerifyPending=null;renderEmailBox()">ยกเลิก</button></div>';
-    return;
-  }
-  box.innerHTML='<div class="emailBox"><div class="small" style="margin-bottom:8px">ยังไม่ได้ยืนยันอีเมล</div><input id="ev_email" type="email" placeholder="อีเมลของคุณ" value="'+escapeHTML(myEmailInfo.email||'')+'"><button class="primary" onclick="sendEmailCode()">ส่งรหัสยืนยัน</button></div>';
-}
-async function sendEmailCode(){
-  const email=$('ev_email').value.trim();
-  if(!email){toast('กรอกอีเมล','error');return;}
-  toast('กำลังส่ง...','info');
-  const r=await post('/api/send-verify-email',{user:MY,email});
-  if(!r.ok){toast(r.msg,'error');return;}
-  emailVerifyPending=email;toast('ส่งรหัสแล้ว','success');renderEmailBox();
-}
-async function verifyEmailCode(){
-  const code=$('ev_code').value.trim();
-  if(!code){toast('กรอกรหัส','error');return;}
-  const r=await post('/api/verify-email',{user:MY,email:emailVerifyPending,code});
-  if(!r.ok){toast(r.msg,'error');return;}
-  toast('ยืนยันสำเร็จ','success');
-  emailVerifyPending=null;
-  await refresh();renderEmailBox();renderProfile();
 }
 function setTheme(th){document.documentElement.setAttribute('data-theme',th);localStorage.setItem('mm_theme',th);updateThemeButtons();}
 function updateThemeButtons(){const th=document.documentElement.getAttribute('data-theme')||'dark';$('themeDark').classList.toggle('on',th==='dark');$('themeLight').classList.toggle('on',th==='light');}
@@ -891,14 +856,28 @@ function openPlayer(id){
   const canEdit=(s.uploader===MY||myEmailInfo.isAdmin||isAdminLocal(MY));
   $('editBtn').style.display=canEdit?'inline-flex':'none';
   const audio=$('audioEl');
-  audio.src=s.audioUrl;audio.loop=loopMode;audio.play();
+  audio.src=s.audioUrl;audio.loop=loopMode;
+  const playPromise = audio.play();
+  if(playPromise) playPromise.catch(e=>console.log('Autoplay blocked:',e));
   $('pl_playBtn').innerHTML=ICON_PAUSE;
   updateLikeBtn();updateMini();
   $('player').classList.add('active');hideMini();
   audio.onended=()=>{if(!loopMode)playNext();};
   setTimeout(updateProgress,100);
+  updateMediaSession();
 }
-function playNext(){const i=SONGS.findIndex(x=>x.id===currentSongId);const n=SONGS[(i+1)%SONGS.length];if(n)openPlayer(n.id);}
+function playNext(){
+  if(!SONGS.length) return;
+  const i=SONGS.findIndex(x=>x.id===currentSongId);
+  const n=SONGS[(i+1)%SONGS.length];
+  if(n) openPlayer(n.id);
+}
+function playPrev(){
+  if(!SONGS.length) return;
+  const i=SONGS.findIndex(x=>x.id===currentSongId);
+  const p=SONGS[(i-1+SONGS.length)%SONGS.length];
+  if(p) openPlayer(p.id);
+}
 function togglePlay(){const a=$('audioEl');if(a.paused){a.play();$('pl_playBtn').innerHTML=ICON_PAUSE;}else{a.pause();$('pl_playBtn').innerHTML=ICON_PLAY;}updateMiniPlayBtn();}
 function toggleLoopMode(){loopMode=!loopMode;$('audioEl').loop=loopMode;$('pl_loopBtn').innerHTML=loopMode?ICON_REPEAT:ICON_NEXT;}
 function closePlayer(){$('player').classList.remove('active');if(currentSongId)showMini();}
@@ -1001,9 +980,7 @@ function deleteSong(){
   $('del_confirmBtn').textContent='ลบถาวร';
   $('deleteModal').classList.add('active');
 }
-function closeDeleteModal(){
-  $('deleteModal').classList.remove('active');
-}
+function closeDeleteModal(){$('deleteModal').classList.remove('active');}
 async function confirmDeleteSong(){
   const s=SONGS.find(x=>x.id===currentSongId);if(!s)return;
   const btn=$('del_confirmBtn');
@@ -1016,10 +993,7 @@ async function confirmDeleteSong(){
     toast(r.msg,'error');
     return;
   }
-  closeDeleteModal();
-  closeEdit();
-  closePlayer();
-  hideMini();
+  closeDeleteModal();closeEdit();closePlayer();hideMini();
   currentSongId=null;
   await refresh();
   switchScreen('home');
@@ -1047,7 +1021,11 @@ function updateMini(){
   $('mp_uploader').textContent=uname;
   updateMiniPlayBtn();updateProgress();
 }
-function updateMiniPlayBtn(){const a=$('audioEl');$('mp_playBtn').innerHTML=a.paused?ICON_PLAY:ICON_PAUSE;}
+function updateMiniPlayBtn(){
+  const a=$('audioEl');
+  $('mp_playBtn').innerHTML=a.paused?ICON_PLAY:ICON_PAUSE;
+  updateMediaSessionState();
+}
 function showMini(){$('miniPlayer').classList.add('active');}
 function hideMini(){$('miniPlayer').classList.remove('active');}
 function openMiniPlayerFull(){if(!currentSongId)return;$('player').classList.add('active');hideMini();}
@@ -1058,6 +1036,46 @@ function closeMenu(){$('menu').classList.remove('active');}
 async function addToAlbum(type){await post('/api/album',{user:MY,songId:currentSongId,type});await refresh();closeMenu();toast('✓','success');}
 function openPremium(){$('premiumModal').classList.add('active');}
 function closePremium(){$('premiumModal').classList.remove('active');}
+
+/* ===== MEDIA SESSION ===== */
+function updateMediaSession(){
+  const s=SONGS.find(x=>x.id===currentSongId);
+  if(!s) return;
+  if(!('mediaSession' in navigator)) return;
+  const uname=(USERS[s.uploader]&&USERS[s.uploader].name)||s.uploader;
+  try{
+    const art=[];
+    if(s.coverUrl){
+      art.push({src:s.coverUrl,sizes:'96x96',type:'image/jpeg'});
+      art.push({src:s.coverUrl,sizes:'128x128',type:'image/jpeg'});
+      art.push({src:s.coverUrl,sizes:'256x256',type:'image/jpeg'});
+      art.push({src:s.coverUrl,sizes:'512x512',type:'image/jpeg'});
+    }
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: s.title,
+      artist: uname,
+      album: 'MyMusic',
+      artwork: art
+    });
+    navigator.mediaSession.setActionHandler('play', ()=>{ if($('audioEl').paused) togglePlay(); });
+    navigator.mediaSession.setActionHandler('pause', ()=>{ if(!$('audioEl').paused) togglePlay(); });
+    navigator.mediaSession.setActionHandler('previoustrack', playPrev);
+    navigator.mediaSession.setActionHandler('nexttrack', playNext);
+    navigator.mediaSession.setActionHandler('stop', ()=>{ $('audioEl').pause(); });
+    try{
+      navigator.mediaSession.setActionHandler('seekbackward', (d)=>{ $('audioEl').currentTime=Math.max(0,$('audioEl').currentTime-(d.seekOffset||10)); });
+      navigator.mediaSession.setActionHandler('seekforward', (d)=>{ $('audioEl').currentTime=Math.min($('audioEl').duration||0,$('audioEl').currentTime+(d.seekOffset||10)); });
+    }catch(e){}
+    try{
+      navigator.mediaSession.setActionHandler('seekto', (d)=>{ if(d.seekTime!=null) $('audioEl').currentTime=d.seekTime; });
+    }catch(e){}
+  }catch(e){ console.error('MediaSession:',e); }
+}
+function updateMediaSessionState(){
+  if(!('mediaSession' in navigator)) return;
+  try{ navigator.mediaSession.playbackState = $('audioEl').paused ? 'paused' : 'playing'; }catch(e){}
+}
+
 async function adminBan(target,banned){
   const r=await post('/api/admin/ban',{admin:MY,target,banned});
   if(!r.ok){toast(r.msg||'Error','error');return false;}
@@ -1129,7 +1147,6 @@ function renderProfile(){
   $('pf_songs_list').innerHTML=mySongs.length?'<div class="grid" style="padding:0">'+mySongs.map(gridCardHTML).join('')+'</div>':'<p class="small">ยังไม่มีเพลง</p>';
   $('pf_liked').innerHTML=liked.length?'<div class="grid" style="padding:0">'+liked.map(gridCardHTML).join('')+'</div>':'<p class="small">ยังไม่มี</p>';
   $('pf_fav').innerHTML=fav.length?'<div class="grid" style="padding:0">'+fav.map(gridCardHTML).join('')+'</div>':'<p class="small">ยังไม่มี</p>';
-  renderEmailBox();
 }
 async function saveName(){
   const n=$('pf_name').value.trim();if(!n)return;
