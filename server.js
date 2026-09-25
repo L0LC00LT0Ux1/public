@@ -355,7 +355,6 @@ app.post('/api/download', (req,res)=>{
   res.json({ok:true, url: s.audioUrl, filename: s.title+'.mp3', remaining: remain});
 });
 
-/* ===== ADMIN ENDPOINTS ===== */
 app.post('/api/admin/ban', (req,res)=>{
   const {admin, target, banned} = req.body;
   if(!isAdminName(admin)) return res.json({ok:false, msg:'ไม่มีสิทธิ์'});
@@ -386,10 +385,8 @@ app.post('/api/admin/premium', (req,res)=>{
   res.json({ok:true, premiumUntil: tu.premiumUntil});
 });
 
-/* ===== DEBUG (ไว้เช็คว่า endpoint ทำงาน) ===== */
 app.get('/api/admin/check', (req,res)=>{
   res.json({ok:true, adminName: ADMIN_NAME, hasAdminRoutes: true});
 });
 
 app.listen(PORT,'0.0.0.0',()=>console.log('Server: http://0.0.0.0:'+PORT));
-EOF
