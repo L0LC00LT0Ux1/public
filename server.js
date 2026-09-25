@@ -1,20 +1,29 @@
 const express = require('express');
 const multer = require('multer');
-const fs = require('fs');
 const path = require('path');
 const nodemailer = require('nodemailer');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const EMAIL_USER = 'hackroblox.toux1@gmail.com';
-const EMAIL_PASS = 'ghoilvnnbnpzslaq';
+const EMAIL_USER = process.env.EMAIL_USER || 'hackroblox.toux1@gmail.com';
+const EMAIL_PASS = process.env.EMAIL_PASS || 'ghoilvnnbnpzslaq';
+const SUPABASE_URL = process.env.SUPABASE_URL || '';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
 
 const ADMIN_NAME = 'T0Ux1';
 const COOLDOWN_MS = 5*60*1000;
 const DAILY_LIMIT_FREE = 5;
 const DAILY_LIMIT_PREMIUM = 15;
 const DAILY_DOWNLOAD_LIMIT = 3;
+
+if(!SUPABASE_URL || !SUPABASE_KEY){
+  console.error('ต้องตั้งค่า SUPABASE_URL และ SUPABASE_KEY');
+  process.exit(1);
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 function isAdminName(n){
   if(!n) return false;
@@ -31,15 +40,57 @@ if(EMAIL_USER && EMAIL_PASS){
 
 app.use(express.json({limit:'5mb'}));
 app.use(express.static(path.join(__dirname,'public')));
-app.use('/uploads', express.static(path.join(__dirname,'uploads')));
 
-const DB_FILE = path.join(__dirname,'db.json');
-const UP_DIR = path.join(__dirname,'uploads');
-if(!fs.existsSync(UP_DIR)) fs.mkdirSync(UP_DIR,{recursive:true});
-if(!fs.existsSync(DB_FILE)) fs.writeFileSync(DB_FILE, JSON.stringify({users:{},songs:[]}));
+let dbCache = null;
+let dbLoaded = false;
 
-const loadDB = () => JSON.parse(fs.readFileSync(DB_FILE,'utf8'));
-const saveDB = db => fs.writeFileSync(DB_FILE, JSON.stringify(db));
+async function loadDB(){
+  if(dbLoaded && dbCache) return JSON.parse(JSON.stringify(dbCache));
+  const { data, error } = await supabase.from('kv').select('*');
+  if(error){ console.error('loadDB error:', error.message); return { users:{}, songs:[] }; }
+  const db = { users:{}, songs:[] };
+  for(const row of data || []){
+    if(row.key === 'users') db.users = row.value || {};
+    if(row.key === 'songs') db.songs = row.value || [];
+  }
+  dbCache = JSON.parse(JSON.stringify(db));
+  dbLoaded = true;
+  return db;
+}
+
+async function saveDB(db){
+  const { error } = await supabase.from('kv').upsert([
+    { key:'users', value: db.users },
+    { key:'songs', value: db.songs }
+  ]);
+  if(error){ console.error('saveDB error:', error.message); return; }
+  dbCache = JSON.parse(JSON.stringify(db));
+  dbLoaded = true;
+}
+
+async function uploadFileToSupabase(file, folder){
+  const ext = path.extname(file.originalname || '');
+  const filename = Date.now()+'-'+Math.random().toString(36).slice(2,8)+ext;
+  const filepath = folder+'/'+filename;
+  const { error } = await supabase.storage.from('uploads').upload(filepath, file.buffer, {
+    contentType: file.mimetype || 'application/octet-stream',
+    upsert: false
+  });
+  if(error) throw new Error('Upload failed: '+error.message);
+  const { data } = supabase.storage.from('uploads').getPublicUrl(filepath);
+  return data.publicUrl;
+}
+
+async function deleteFileFromSupabase(url){
+  if(!url) return;
+  try{
+    const marker = '/storage/v1/object/public/uploads/';
+    const idx = url.indexOf(marker);
+    if(idx === -1) return;
+    const filepath = url.substring(idx + marker.length);
+    await supabase.storage.from('uploads').remove([filepath]);
+  }catch(e){ console.error('deleteFile error:', e.message); }
+}
 
 const pendingCodes = {};
 function genCode(){ return String(Math.floor(100000+Math.random()*900000)); }
@@ -55,19 +106,10 @@ function mailTemplate(title, code, sub){
     '<p style="color:#666;font-size:12px;margin:20px 0 0">รหัสนี้หมดอายุใน 10 นาที</p></div>';
 }
 
-const storage = multer.diskStorage({
-  destination: (r,f,cb)=>cb(null,UP_DIR),
-  filename: (r,f,cb)=>cb(null, Date.now()+'-'+Math.random().toString(36).slice(2,8)+path.extname(f.originalname))
-});
-const upload = multer({storage, limits:{fileSize: 50*1024*1024}});
-function deleteFile(url){
-  if(!url) return;
-  const fp = path.join(UP_DIR, url.split('/').pop());
-  if(fs.existsSync(fp)){ try{ fs.unlinkSync(fp); }catch(e){} }
-}
+const upload = multer({ storage: multer.memoryStorage(), limits:{fileSize: 50*1024*1024}});
 
-app.get('/api/users', (req,res)=>{
-  const db = loadDB(), out = {};
+app.get('/api/users', async (req,res)=>{
+  const db = await loadDB(), out = {};
   for(const k in db.users){
     const u = db.users[k];
     out[k] = {
@@ -83,8 +125,8 @@ app.get('/api/users', (req,res)=>{
   res.json(out);
 });
 
-app.get('/api/me', (req,res)=>{
-  const db = loadDB();
+app.get('/api/me', async (req,res)=>{
+  const db = await loadDB();
   const u = db.users[req.query.user];
   if(!u) return res.json({ok:false});
   const admin = isAdminName(req.query.user);
@@ -102,12 +144,12 @@ app.get('/api/me', (req,res)=>{
   });
 });
 
-app.post('/api/signup', (req,res)=>{
+app.post('/api/signup', async (req,res)=>{
   const {name,password} = req.body;
   if(!name||!password) return res.json({ok:false,msg:'กรอกไม่ครบ'});
   const clean = name.trim();
   if(clean.length < 2) return res.json({ok:false,msg:'ชื่อสั้นเกินไป'});
-  const db = loadDB();
+  const db = await loadDB();
   const exists = Object.keys(db.users).some(k=>k.toLowerCase()===clean.toLowerCase());
   if(exists) return res.json({ok:false,msg:'มีชื่อนี้แล้ว'});
   db.users[clean] = {
@@ -116,13 +158,13 @@ app.post('/api/signup', (req,res)=>{
     isBanned:false, premiumUntil:0, nameColor:'',
     uploadLog:[], downloadLog:[], lastUploadAt:0
   };
-  saveDB(db);
+  await saveDB(db);
   res.json({ok:true});
 });
 
-app.post('/api/login', (req,res)=>{
+app.post('/api/login', async (req,res)=>{
   const {name,password} = req.body;
-  const db = loadDB();
+  const db = await loadDB();
   const key = Object.keys(db.users).find(k=>k.toLowerCase()===(name||'').trim().toLowerCase());
   if(!key || db.users[key].password !== password)
     return res.json({ok:false,msg:'ชื่อหรือรหัสผ่านไม่ถูกต้อง'});
@@ -136,7 +178,7 @@ app.post('/api/send-verify-email', async (req,res)=>{
     const {user, email} = req.body;
     if(!user||!email) return res.json({ok:false,msg:'ข้อมูลไม่ครบ'});
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.json({ok:false,msg:'อีเมลไม่ถูกต้อง'});
-    const db = loadDB();
+    const db = await loadDB();
     if(!db.users[user]) return res.json({ok:false,msg:'ไม่พบผู้ใช้'});
     for(const k in db.users){
       if(k !== user && db.users[k].email && db.users[k].emailVerified &&
@@ -151,7 +193,7 @@ app.post('/api/send-verify-email', async (req,res)=>{
   }catch(e){ res.json({ok:false,msg:e.message}); }
 });
 
-app.post('/api/verify-email', (req,res)=>{
+app.post('/api/verify-email', async (req,res)=>{
   const {user, email, code} = req.body;
   const key = (email||'').toLowerCase();
   const p = pendingCodes[key];
@@ -159,11 +201,11 @@ app.post('/api/verify-email', (req,res)=>{
   if(p.expires < Date.now()){ delete pendingCodes[key]; return res.json({ok:false,msg:'รหัสหมดอายุ'}); }
   if(p.type!=='verify' || p.user!==user) return res.json({ok:false,msg:'รหัสไม่ถูกต้อง'});
   if(String(p.code) !== String(code).trim()) return res.json({ok:false,msg:'รหัสไม่ถูกต้อง'});
-  const db = loadDB();
+  const db = await loadDB();
   if(!db.users[user]) return res.json({ok:false,msg:'ไม่พบผู้ใช้'});
   db.users[user].email = email;
   db.users[user].emailVerified = true;
-  saveDB(db);
+  await saveDB(db);
   delete pendingCodes[key];
   res.json({ok:true});
 });
@@ -172,7 +214,7 @@ app.post('/api/forgot', async (req,res)=>{
   try{
     const {email} = req.body;
     if(!email) return res.json({ok:false,msg:'กรอกอีเมล'});
-    const db = loadDB();
+    const db = await loadDB();
     let found = null;
     for(const k in db.users){
       const u = db.users[k];
@@ -199,15 +241,18 @@ app.post('/api/forgot-verify', (req,res)=>{
   res.json({ok:true, username});
 });
 
-app.get('/api/songs', (req,res)=> res.json(loadDB().songs));
+app.get('/api/songs', async (req,res)=>{
+  const db = await loadDB();
+  res.json(db.songs);
+});
 
 app.post('/api/upload',
   upload.fields([{name:'audio',maxCount:1},{name:'cover',maxCount:1},{name:'bg',maxCount:1}]),
-  (req,res)=>{
+  async (req,res)=>{
   try{
     const {title,uploader,volume,description} = req.body;
     if(!title || !req.files.audio) return res.json({ok:false,msg:'ข้อมูลไม่ครบ'});
-    const db = loadDB();
+    const db = await loadDB();
     const user = db.users[uploader];
     if(!user) return res.json({ok:false,msg:'ไม่พบผู้ใช้'});
     if(user.isBanned && !isAdminName(uploader)) return res.json({ok:false,msg:'บัญชีถูกแบน'});
@@ -227,12 +272,16 @@ app.post('/api/upload',
       }
     }
 
+    const audioUrl = await uploadFileToSupabase(req.files.audio[0], 'audio');
+    let coverUrl = '';
+    let bgUrl = '';
+    if(req.files.cover) coverUrl = await uploadFileToSupabase(req.files.cover[0], 'covers');
+    if(req.files.bg) bgUrl = await uploadFileToSupabase(req.files.bg[0], 'backgrounds');
+
     const song = {
       id: Date.now().toString(36)+Math.random().toString(36).slice(2,6),
       title, uploader, description: description||'',
-      audioUrl: '/uploads/'+req.files.audio[0].filename,
-      coverUrl: req.files.cover? '/uploads/'+req.files.cover[0].filename : '',
-      bgUrl: req.files.bg? '/uploads/'+req.files.bg[0].filename : '',
+      audioUrl, coverUrl, bgUrl,
       likes:[], volume: parseFloat(volume)||0.5, uploadedAt: now
     };
     db.songs.push(song);
@@ -241,44 +290,54 @@ app.post('/api/upload',
     user.uploadLog = user.uploadLog||[];
     user.uploadLog.push(now);
     user.lastUploadAt = now;
-    saveDB(db);
+    await saveDB(db);
     res.json({ok:true, song});
   }catch(e){ res.json({ok:false,msg:e.message}); }
 });
 
-app.post('/api/edit-song', (req,res)=>{
+app.post('/api/edit-song', async (req,res)=>{
   const {songId,user,title,description} = req.body;
-  const db = loadDB();
+  const db = await loadDB();
   const s = db.songs.find(x=>x.id===songId);
   if(!s) return res.json({ok:false,msg:'ไม่พบเพลง'});
   if(s.uploader !== user && !isAdminName(user)) return res.json({ok:false,msg:'ไม่มีสิทธิ์'});
   if(title && title.trim()) s.title = title.trim();
   if(description !== undefined) s.description = description;
-  saveDB(db); res.json({ok:true, song:s});
+  await saveDB(db);
+  res.json({ok:true, song:s});
 });
 
 app.post('/api/edit-song-media',
   upload.fields([{name:'cover',maxCount:1},{name:'bg',maxCount:1}]),
-  (req,res)=>{
+  async (req,res)=>{
   try{
     const {songId,user} = req.body;
-    const db = loadDB();
+    const db = await loadDB();
     const s = db.songs.find(x=>x.id===songId);
     if(!s) return res.json({ok:false,msg:'ไม่พบเพลง'});
     if(s.uploader !== user && !isAdminName(user)) return res.json({ok:false,msg:'ไม่มีสิทธิ์'});
-    if(req.files.cover){ deleteFile(s.coverUrl); s.coverUrl = '/uploads/'+req.files.cover[0].filename; }
-    if(req.files.bg){ deleteFile(s.bgUrl); s.bgUrl = '/uploads/'+req.files.bg[0].filename; }
-    saveDB(db); res.json({ok:true, song:s});
+    if(req.files.cover){
+      await deleteFileFromSupabase(s.coverUrl);
+      s.coverUrl = await uploadFileToSupabase(req.files.cover[0], 'covers');
+    }
+    if(req.files.bg){
+      await deleteFileFromSupabase(s.bgUrl);
+      s.bgUrl = await uploadFileToSupabase(req.files.bg[0], 'backgrounds');
+    }
+    await saveDB(db);
+    res.json({ok:true, song:s});
   }catch(e){ res.json({ok:false,msg:e.message}); }
 });
 
-app.post('/api/delete-song', (req,res)=>{
+app.post('/api/delete-song', async (req,res)=>{
   const {songId,user} = req.body;
-  const db = loadDB();
+  const db = await loadDB();
   const s = db.songs.find(x=>x.id===songId);
   if(!s) return res.json({ok:false,msg:'ไม่พบเพลง'});
   if(s.uploader !== user && !isAdminName(user)) return res.json({ok:false,msg:'ไม่มีสิทธิ์ลบ'});
-  deleteFile(s.audioUrl); deleteFile(s.coverUrl); deleteFile(s.bgUrl);
+  await deleteFileFromSupabase(s.audioUrl);
+  await deleteFileFromSupabase(s.coverUrl);
+  await deleteFileFromSupabase(s.bgUrl);
   db.songs = db.songs.filter(x=>x.id!==songId);
   for(const k in db.users){
     const u = db.users[k];
@@ -286,42 +345,46 @@ app.post('/api/delete-song', (req,res)=>{
     u.liked = (u.liked||[]).filter(id=>id!==songId);
     u.fav = (u.fav||[]).filter(id=>id!==songId);
   }
-  saveDB(db); res.json({ok:true});
+  await saveDB(db);
+  res.json({ok:true});
 });
 
-app.post('/api/like', (req,res)=>{
+app.post('/api/like', async (req,res)=>{
   const {songId,user} = req.body;
-  const db = loadDB();
+  const db = await loadDB();
   const s = db.songs.find(x=>x.id===songId);
   if(!s) return res.json({ok:false});
   const i = s.likes.indexOf(user);
   if(i>=0) s.likes.splice(i,1); else s.likes.push(user);
-  saveDB(db); res.json({ok:true, likes:s.likes});
+  await saveDB(db);
+  res.json({ok:true, likes:s.likes});
 });
 
-app.post('/api/follow', (req,res)=>{
+app.post('/api/follow', async (req,res)=>{
   const {from,to} = req.body;
-  const db = loadDB();
+  const db = await loadDB();
   if(!db.users[from]||!db.users[to]) return res.json({ok:false});
   const me = db.users[from], other = db.users[to];
   const i = me.following.indexOf(to);
   if(i>=0){ me.following.splice(i,1); other.followers = other.followers.filter(x=>x!==from); }
   else{ me.following.push(to); other.followers.push(from); }
-  saveDB(db); res.json({ok:true});
+  await saveDB(db);
+  res.json({ok:true});
 });
 
-app.post('/api/album', (req,res)=>{
+app.post('/api/album', async (req,res)=>{
   const {user,songId,type} = req.body;
-  const db = loadDB();
+  const db = await loadDB();
   if(!db.users[user]) return res.json({ok:false});
   const arr = db.users[user][type] = db.users[user][type]||[];
   if(!arr.includes(songId)) arr.push(songId);
-  saveDB(db); res.json({ok:true});
+  await saveDB(db);
+  res.json({ok:true});
 });
 
-app.post('/api/update', (req,res)=>{
+app.post('/api/update', async (req,res)=>{
   const {user,name,avatar,nameColor} = req.body;
-  const db = loadDB();
+  const db = await loadDB();
   const u = db.users[user];
   if(!u) return res.json({ok:false});
   if(name){
@@ -332,12 +395,13 @@ app.post('/api/update', (req,res)=>{
   }
   if(avatar!==undefined) u.avatar = avatar;
   if(nameColor !== undefined && isPremiumUser(u)) u.nameColor = nameColor;
-  saveDB(db); res.json({ok:true});
+  await saveDB(db);
+  res.json({ok:true});
 });
 
-app.post('/api/download', (req,res)=>{
+app.post('/api/download', async (req,res)=>{
   const {user, songId} = req.body;
-  const db = loadDB();
+  const db = await loadDB();
   const u = db.users[user];
   const s = db.songs.find(x=>x.id===songId);
   if(!u || !s) return res.json({ok:false, msg:'ไม่พบข้อมูล'});
@@ -350,26 +414,26 @@ app.post('/api/download', (req,res)=>{
   }
   u.downloadLog = u.downloadLog||[];
   u.downloadLog.push(Date.now());
-  saveDB(db);
+  await saveDB(db);
   const remain = admin ? -1 : (DAILY_DOWNLOAD_LIMIT - countToday(u.downloadLog));
   res.json({ok:true, url: s.audioUrl, filename: s.title+'.mp3', remaining: remain});
 });
 
-app.post('/api/admin/ban', (req,res)=>{
+app.post('/api/admin/ban', async (req,res)=>{
   const {admin, target, banned} = req.body;
   if(!isAdminName(admin)) return res.json({ok:false, msg:'ไม่มีสิทธิ์'});
   if(isAdminName(target)) return res.json({ok:false, msg:'แบนแอดมินไม่ได้'});
-  const db = loadDB();
+  const db = await loadDB();
   if(!db.users[target]) return res.json({ok:false, msg:'ไม่พบผู้ใช้'});
   db.users[target].isBanned = !!banned;
-  saveDB(db);
+  await saveDB(db);
   res.json({ok:true});
 });
 
-app.post('/api/admin/premium', (req,res)=>{
+app.post('/api/admin/premium', async (req,res)=>{
   const {admin, target, days} = req.body;
-  if(!isAdminName(admin)) return res.json({ok:false, msg:'ไม่มีสิทธิ์ (คุณไม่ใช่แอดมิน)'});
-  const db = loadDB();
+  if(!isAdminName(admin)) return res.json({ok:false, msg:'ไม่มีสิทธิ์'});
+  const db = await loadDB();
   const tu = db.users[target];
   if(!tu) return res.json({ok:false, msg:'ไม่พบผู้ใช้'});
   const d = parseInt(days) || 0;
@@ -381,12 +445,12 @@ app.post('/api/admin/premium', (req,res)=>{
     tu.premiumUntil = 0;
     tu.nameColor = '';
   }
-  saveDB(db);
+  await saveDB(db);
   res.json({ok:true, premiumUntil: tu.premiumUntil});
 });
 
 app.get('/api/admin/check', (req,res)=>{
-  res.json({ok:true, adminName: ADMIN_NAME, hasAdminRoutes: true});
+  res.json({ok:true, adminName: ADMIN_NAME, supabase: !!supabase});
 });
 
 app.listen(PORT,'0.0.0.0',()=>console.log('Server: http://0.0.0.0:'+PORT));
