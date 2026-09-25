@@ -82,7 +82,7 @@ button.danger{background:transparent;color:var(--text);border:1px solid rgba(255
 .followSm.following{background:transparent;color:var(--text);border:1px solid var(--line-2);}
 .icn-admin{width:16px;height:16px;flex-shrink:0;display:inline-block;vertical-align:middle;color:#ff1a1a;filter:drop-shadow(0 0 6px rgba(255,26,26,0.95)) drop-shadow(0 0 14px rgba(255,26,26,0.5));animation:adminPulse 1.6s ease-in-out infinite;}
 @keyframes adminPulse{0%,100%{transform:scale(1) rotate(0deg);}50%{transform:scale(1.18) rotate(-4deg);}}
-.name-admin{background:linear-gradient(90deg,#ff1a1a,#000,#ff1a1a,#000,#ff1a1a);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:adminGrad 3s linear infinite;font-weight:900;letter-spacing:-0.02em;}
+.name-admin{background:linear-gradient(90deg,#ff1a1a,#000,#ff1a1a,#000,#ff1a1a);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:adminGrad 3s linear infinite;font-weight:900;}
 @keyframes adminGrad{0%{background-position:0% 50%;}100%{background-position:300% 50%;}}
 .icn-prem{width:15px;height:15px;color:#ffd700;flex-shrink:0;display:inline-block;vertical-align:middle;filter:drop-shadow(0 0 5px rgba(255,215,0,0.7));}
 .icn-verified{width:14px;height:14px;color:#4fc3f7;flex-shrink:0;display:inline-block;vertical-align:middle;}
@@ -109,11 +109,11 @@ button.danger{background:transparent;color:var(--text);border:1px solid rgba(255
 #navbar button{flex:1;background:none;border:none;color:var(--sub-2);padding:6px 4px;margin:0;width:auto;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:12px;transition:all .2s;}
 #navbar button svg{width:22px;height:22px;}
 #navbar button.active{color:var(--text);}
-#navbar .lbl{font-size:10px;font-weight:600;letter-spacing:0.02em;}
+#navbar .lbl{font-size:9.5px;font-weight:600;letter-spacing:0.02em;}
 #authScreen{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;padding:32px 24px;background:var(--bg);position:relative;z-index:5;overflow-y:auto;}
 #authScreen .logo{width:76px;height:76px;border-radius:22px;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;margin-bottom:22px;flex-shrink:0;}
 #authScreen .logo svg{width:38px;height:38px;stroke:currentColor;}
-#authTitle{font-size:28px;font-weight:800;margin:0 0 8px;letter-spacing:-0.03em;text-align:center;}
+#authTitle{font-size:28px;font-weight:800;margin:0 0 8px;text-align:center;}
 #authSub{font-size:13.5px;color:var(--sub);margin:0 0 24px;text-align:center;line-height:1.5;}
 #authScreen a{color:var(--text);text-decoration:none;font-weight:700;border-bottom:1px solid var(--text);padding-bottom:1px;cursor:pointer;}
 #miniPlayer{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120%);width:calc(100% - 24px);max-width:456px;background:rgba(10,10,10,0.92);backdrop-filter:blur(24px);border:1px solid var(--line-2);border-radius:16px;padding:8px 10px 12px;display:flex;align-items:center;gap:8px;z-index:15;opacity:0;pointer-events:none;transition:transform .4s cubic-bezier(.4,0,.2,1), opacity .3s ease;overflow:hidden;}
@@ -124,7 +124,6 @@ button.danger{background:transparent;color:var(--text);border:1px solid rgba(255
 #miniPlayer .mi .t{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25;}
 #miniPlayer .mi .s{font-size:11px;color:var(--sub);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
 #miniPlayer .mb{width:34px;height:34px;flex-shrink:0;padding:0;margin:0;border-radius:50%;background:transparent;color:var(--text);border:none;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-#miniPlayer .mb:hover{background:rgba(255,255,255,0.08);}
 #miniPlayer .mb svg{width:16px;height:16px;}
 #miniPlayer .mb.play{background:var(--accent);color:var(--on-accent);}
 #miniPlayer .mb.prev,#miniPlayer .mb.next{background:rgba(255,255,255,0.05);border:1px solid var(--line-2);}
@@ -203,10 +202,48 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
 .historyChip .hx svg{width:11px;height:11px;}
 ::-webkit-scrollbar{width:0;height:0;}
 
+/* ==== CHAT ==== */
+.chatBadge{position:absolute;top:-4px;right:-8px;background:#ff3b30;color:#fff;font-size:10px;font-weight:800;min-width:16px;height:16px;border-radius:100px;padding:0 4px;display:none;align-items:center;justify-content:center;border:2px solid var(--bg);}
+.chatBadge.show{display:flex;}
+.chatRow{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.chatRow:hover{border-color:var(--line-2);background:var(--card-2);}
+.chatRow img{width:48px;height:48px;border-radius:50%;object-fit:cover;background:var(--card-2);flex-shrink:0;}
+.chatRowInfo{flex:1;min-width:0;}
+.chatRowName{font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:4px;}
+.chatRowPreview{font-size:12.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.chatRowMeta{font-size:10.5px;color:var(--sub);flex-shrink:0;font-weight:600;}
+.chatRowBadge{position:absolute;top:-2px;right:-2px;background:#ff3b30;color:#fff;font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:100px;padding:0 5px;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);}
+#chatRoom{position:fixed;inset:0;background:var(--bg);z-index:70;display:none;flex-direction:column;max-width:480px;margin:0 auto;}
+#chatRoom.active{display:flex;animation:slideUp .3s;}
+.chatHeader{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bg-2);border-bottom:1px solid var(--line);padding-top:calc(14px + env(safe-area-inset-top));flex-shrink:0;}
+.chatHeader button{width:auto;padding:8px;margin:0;background:transparent;border:none;color:var(--text);flex-shrink:0;}
+.chatHeader button svg{width:20px;height:20px;}
+.chatHeader img{width:40px;height:40px;border-radius:50%;object-fit:cover;background:var(--card-2);flex-shrink:0;}
+.chatHeader .chInfo{flex:1;min-width:0;cursor:pointer;}
+.chatHeader .chName{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:4px;}
+.chatHeader .chStatus{font-size:11px;color:var(--sub);margin-top:2px;}
+.chatMessages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--bg);}
+.chatBubble{max-width:75%;display:flex;flex-direction:column;gap:3px;}
+.chatBubble.mine{align-self:flex-end;align-items:flex-end;}
+.chatBubble.them{align-self:flex-start;align-items:flex-start;}
+.chatBubbleInner{padding:10px 14px;border-radius:18px;font-size:14.5px;line-height:1.4;word-wrap:break-word;word-break:break-word;white-space:pre-wrap;}
+.chatBubble.mine .chatBubbleInner{background:var(--accent);color:var(--on-accent);border-bottom-right-radius:6px;}
+.chatBubble.them .chatBubbleInner{background:var(--card);color:var(--text);border:1px solid var(--line);border-bottom-left-radius:6px;}
+.chatBubbleInner img.chatImg{max-width:100%;border-radius:12px;display:block;max-height:280px;object-fit:cover;background:var(--card-2);}
+.chatBubbleInner video.chatVideo{max-width:100%;border-radius:12px;display:block;max-height:280px;background:#000;}
+.chatBubbleInner audio.chatAudio{max-width:100%;display:block;}
+.chatBubbleTime{font-size:10px;color:var(--sub);padding:0 6px;}
+.chatInput{display:flex;align-items:flex-end;gap:8px;padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom));background:var(--bg-2);border-top:1px solid var(--line);flex-shrink:0;}
+.chatInput textarea{flex:1;margin:0;padding:10px 14px;border-radius:22px;background:var(--card);border:1px solid var(--line-2);min-height:42px;max-height:120px;resize:none;font-size:14.5px;line-height:1.4;}
+.chatInput .chatAttach{width:42px;height:42px;border-radius:50%;background:var(--card);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.chatInput .chatAttach svg{width:20px;height:20px;color:var(--text);}
+.chatInput .chatSend{width:42px;height:42px;border-radius:50%;padding:0;margin:0;background:var(--accent);color:var(--on-accent);border:none;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.chatInput .chatSend svg{width:20px;height:20px;}
+
 /* ==== DELETE MODAL ==== */
 #deleteModal{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:100;display:none;align-items:center;justify-content:center;padding:24px;}
 #deleteModal.active{display:flex;animation:fadeIn .2s;}
-#deleteModal .dcard{background:var(--bg-2);border:1px solid var(--line-2);border-radius:24px;padding:28px 24px 20px;max-width:400px;width:100%;text-align:center;animation:deleteIn .35s cubic-bezier(.4,0,.2,1);box-shadow:0 30px 60px -20px rgba(0,0,0,0.9),0 0 0 1px rgba(255,80,80,0.15);}
+#deleteModal .dcard{background:var(--bg-2);border:1px solid var(--line-2);border-radius:24px;padding:28px 24px 20px;max-width:400px;width:100%;text-align:center;animation:deleteIn .35s cubic-bezier(.4,0,.2,1);box-shadow:0 30px 60px -20px rgba(0,0,0,0.9);}
 @keyframes deleteIn{from{opacity:0;transform:scale(.85) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
 #deleteModal .trashIcon{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,rgba(255,50,50,0.2),rgba(255,50,50,0.03));border:2px solid rgba(255,80,80,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;animation:trashPulse 2s ease-in-out infinite;position:relative;}
 #deleteModal .trashIcon::before{content:"";position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(255,60,60,0.2);animation:trashRing 2s ease-out infinite;}
@@ -292,6 +329,14 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
     </div>
   </div>
 
+  <div class="screen" id="chatScreen">
+    <div class="pad">
+      <h2>แชท</h2>
+      <input id="chatSearch" placeholder="ค้นหาเพื่อน..." oninput="renderChatList()">
+      <div id="chatList" style="margin-top:12px"></div>
+    </div>
+  </div>
+
   <div class="screen" id="uploadScreen">
     <div class="pad">
       <h2>อัปโหลดเพลง</h2>
@@ -359,11 +404,6 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
         <input id="adminSearch" placeholder="ค้นหาผู้ใช้..." oninput="onAdminSearch(this.value)" style="margin-bottom:10px">
         <div id="adminUserList"></div>
       </div>
-      <h3>ภาษา</h3>
-      <div class="themeRow">
-        <button class="ghost" id="langTh" onclick="setLang('th')">ไทย</button>
-        <button class="ghost" id="langEn" onclick="setLang('en')">English</button>
-      </div>
       <h3>ธีม</h3>
       <div class="themeRow">
         <button class="ghost" id="themeDark" onclick="setTheme('dark')">มืด</button>
@@ -397,6 +437,13 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
   <div id="navbar">
     <button onclick="switchScreen('home')" id="nav_home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1h-5v-7h-6v7H4a1 1 0 01-1-1V9.5z"/></svg><span class="lbl">หน้าหลัก</span></button>
     <button onclick="switchScreen('search')" id="nav_search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span class="lbl">ค้นหา</span></button>
+    <button onclick="switchScreen('chat')" id="nav_chat">
+      <div style="position:relative;display:inline-block;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+        <span id="chatBadge" class="chatBadge"></span>
+      </div>
+      <span class="lbl">แชท</span>
+    </button>
     <button onclick="switchScreen('upload')" id="nav_upload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">อัปโหลด</span></button>
     <button onclick="switchScreen('profile')" id="nav_profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 014-4h8a4 4 0 014 4v2"/></svg><span class="lbl">โปรไฟล์</span></button>
   </div>
@@ -427,6 +474,26 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
       <button onclick="toggleLike()" id="pl_likeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
     </div>
     <audio id="audioEl" style="display:none" preload="auto"></audio>
+  </div>
+
+  <div id="chatRoom">
+    <div class="chatHeader">
+      <button onclick="closeChatRoom()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <img id="cr_avatar" src="">
+      <div class="chInfo" onclick="closeChatRoom();viewChatFriend()">
+        <div class="chName" id="cr_name">-</div>
+        <div class="chStatus">แชท</div>
+      </div>
+    </div>
+    <div class="chatMessages" id="chatMessages"></div>
+    <div class="chatInput">
+      <label class="chatAttach">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+        <input type="file" id="chatFileInput" accept="image/*,video/*,audio/*" style="display:none" onchange="sendChatFile(this)">
+      </label>
+      <textarea id="chatTextInput" placeholder="พิมพ์ข้อความ..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatText();}"></textarea>
+      <button class="chatSend" onclick="sendChatText()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+    </div>
   </div>
 
   <div id="menu"><div class="sheet">
@@ -497,6 +564,7 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
         <div>
           <h3 id="uv_name" style="margin:0 0 8px;font-size:20px;text-transform:none;color:var(--text);display:flex;align-items:center;gap:4px;"></h3>
           <button class="followBtn primary" id="uv_followBtn" onclick="toggleFollowUser()">—</button>
+          <button class="followBtn" id="uv_chatBtn" onclick="openChatFromProfile()" style="margin-top:8px;background:var(--accent);color:var(--on-accent);border:none;">แชท</button>
         </div>
       </div>
       <div class="statRow" style="grid-template-columns:1fr 1fr">
@@ -520,12 +588,7 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
 <div id="deleteModal">
   <div class="dcard">
     <div class="trashIcon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="3 6 5 6 21 6"/>
-        <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
-        <path d="M10 11v6M14 11v6"/>
-        <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
     </div>
     <h3>ลบเพลงนี้?</h3>
     <p class="delSub">การลบไม่สามารถกู้คืนได้</p>
@@ -549,6 +612,7 @@ hr.divider{border:none;border-top:1px solid var(--line);margin:24px 0;}
 let USERS={},SONGS={},MY=localStorage.getItem('mm_session')||'',currentSongId=null,loopMode=true,currentSort='new',pendingSongId=null,editCoverFile=null,editBgFile=null,adminSearchQuery='';
 let myEmailInfo={ok:false,isAdmin:false,isPremium:false,premiumUntil:0,nameColor:'',uploadsToday:0,uploadLimit:5,lastUploadAt:0,cooldownMs:300000};
 let LANG=localStorage.getItem('mm_lang')||'th';
+let CURRENT_PROFILE=null;
 const CLIENT_ADMIN_NAME='T0Ux1';
 function isAdminLocal(n){if(!n)return false;return String(n).trim().toLowerCase()===CLIENT_ADMIN_NAME.toLowerCase();}
 const $=id=>document.getElementById(id);
@@ -656,6 +720,8 @@ function logout(){
   localStorage.removeItem('mm_session');MY='';
   $('audioEl').pause();hideMini();currentSongId=null;
   if('mediaSession' in navigator) try{navigator.mediaSession.playbackState='none';}catch(e){}
+  if(chatPollTimer){clearInterval(chatPollTimer);chatPollTimer=null;}
+  if(unreadPollTimer){clearInterval(unreadPollTimer);unreadPollTimer=null;}
   authScreen.style.display='flex';navbar.style.display='none';
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   showLogin();toast('ออกจากระบบแล้ว','info');
@@ -664,15 +730,17 @@ async function enterApp(){
   await refresh();
   authScreen.style.display='none';navbar.style.display='flex';
   switchScreen('home');
+  startUnreadPolling();
   if(pendingSongId){const id=pendingSongId;pendingSongId=null;setTimeout(()=>{if(SONGS.find(s=>s.id===id))openPlayer(id);},400);}
 }
 function switchScreen(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('#navbar button').forEach(b=>b.classList.remove('active'));
-  const map={home:'homeScreen',search:'searchScreen',upload:'uploadScreen',profile:'profileScreen'};
+  const map={home:'homeScreen',search:'searchScreen',chat:'chatScreen',upload:'uploadScreen',profile:'profileScreen'};
   if(map[name]){document.getElementById(map[name]).classList.add('active');document.getElementById('nav_'+name).classList.add('active');}
   if(name==='home')renderHome();
   if(name==='search'){$('searchResults').innerHTML='';$('searchInput').value='';renderSearchHistory();}
+  if(name==='chat')renderChatScreen();
   if(name==='profile')renderProfile();
   if(name==='upload')renderUploadInfo();
 }
@@ -703,8 +771,6 @@ function updateThemeButtons(){const th=document.documentElement.getAttribute('da
 function applyLang(){
   document.documentElement.lang=LANG;
   $('langLabel').textContent=LANG.toUpperCase();
-  $('langTh').classList.toggle('on',LANG==='th');
-  $('langEn').classList.toggle('on',LANG==='en');
 }
 function setLang(l){LANG=l;localStorage.setItem('mm_lang',l);applyLang();closeLang();if(MY){renderHome();renderSearch();renderProfile();}}
 function openLang(){$('langModal').classList.add('active');}
@@ -857,8 +923,7 @@ function openPlayer(id){
   $('editBtn').style.display=canEdit?'inline-flex':'none';
   const audio=$('audioEl');
   audio.src=s.audioUrl;audio.loop=loopMode;
-  const playPromise = audio.play();
-  if(playPromise) playPromise.catch(e=>console.log('Autoplay blocked:',e));
+  const p=audio.play();if(p)p.catch(e=>console.log('Autoplay:',e));
   $('pl_playBtn').innerHTML=ICON_PAUSE;
   updateLikeBtn();updateMini();
   $('player').classList.add('active');hideMini();
@@ -866,18 +931,8 @@ function openPlayer(id){
   setTimeout(updateProgress,100);
   updateMediaSession();
 }
-function playNext(){
-  if(!SONGS.length) return;
-  const i=SONGS.findIndex(x=>x.id===currentSongId);
-  const n=SONGS[(i+1)%SONGS.length];
-  if(n) openPlayer(n.id);
-}
-function playPrev(){
-  if(!SONGS.length) return;
-  const i=SONGS.findIndex(x=>x.id===currentSongId);
-  const p=SONGS[(i-1+SONGS.length)%SONGS.length];
-  if(p) openPlayer(p.id);
-}
+function playNext(){if(!SONGS.length)return;const i=SONGS.findIndex(x=>x.id===currentSongId);const n=SONGS[(i+1)%SONGS.length];if(n)openPlayer(n.id);}
+function playPrev(){if(!SONGS.length)return;const i=SONGS.findIndex(x=>x.id===currentSongId);const p=SONGS[(i-1+SONGS.length)%SONGS.length];if(p)openPlayer(p.id);}
 function togglePlay(){const a=$('audioEl');if(a.paused){a.play();$('pl_playBtn').innerHTML=ICON_PAUSE;}else{a.pause();$('pl_playBtn').innerHTML=ICON_PLAY;}updateMiniPlayBtn();}
 function toggleLoopMode(){loopMode=!loopMode;$('audioEl').loop=loopMode;$('pl_loopBtn').innerHTML=loopMode?ICON_REPEAT:ICON_NEXT;}
 function closePlayer(){$('player').classList.remove('active');if(currentSongId)showMini();}
@@ -987,17 +1042,10 @@ async function confirmDeleteSong(){
   btn.disabled=true;
   btn.textContent='กำลังลบ...';
   const r=await post('/api/delete-song',{songId:currentSongId,user:MY});
-  if(!r.ok){
-    btn.disabled=false;
-    btn.textContent='ลบถาวร';
-    toast(r.msg,'error');
-    return;
-  }
+  if(!r.ok){btn.disabled=false;btn.textContent='ลบถาวร';toast(r.msg,'error');return;}
   closeDeleteModal();closeEdit();closePlayer();hideMini();
   currentSongId=null;
-  await refresh();
-  switchScreen('home');
-  toast('ลบเพลงแล้ว','success');
+  await refresh();switchScreen('home');toast('ลบเพลงแล้ว','success');
 }
 async function shareSong(){
   if(!currentSongId)return;
@@ -1021,11 +1069,7 @@ function updateMini(){
   $('mp_uploader').textContent=uname;
   updateMiniPlayBtn();updateProgress();
 }
-function updateMiniPlayBtn(){
-  const a=$('audioEl');
-  $('mp_playBtn').innerHTML=a.paused?ICON_PLAY:ICON_PAUSE;
-  updateMediaSessionState();
-}
+function updateMiniPlayBtn(){const a=$('audioEl');$('mp_playBtn').innerHTML=a.paused?ICON_PLAY:ICON_PAUSE;updateMediaSessionState();}
 function showMini(){$('miniPlayer').classList.add('active');}
 function hideMini(){$('miniPlayer').classList.remove('active');}
 function openMiniPlayerFull(){if(!currentSongId)return;$('player').classList.add('active');hideMini();}
@@ -1039,8 +1083,7 @@ function closePremium(){$('premiumModal').classList.remove('active');}
 
 /* ===== MEDIA SESSION ===== */
 function updateMediaSession(){
-  const s=SONGS.find(x=>x.id===currentSongId);
-  if(!s) return;
+  const s=SONGS.find(x=>x.id===currentSongId);if(!s)return;
   if(!('mediaSession' in navigator)) return;
   const uname=(USERS[s.uploader]&&USERS[s.uploader].name)||s.uploader;
   try{
@@ -1051,29 +1094,198 @@ function updateMediaSession(){
       art.push({src:s.coverUrl,sizes:'256x256',type:'image/jpeg'});
       art.push({src:s.coverUrl,sizes:'512x512',type:'image/jpeg'});
     }
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: s.title,
-      artist: uname,
-      album: 'MyMusic',
-      artwork: art
-    });
-    navigator.mediaSession.setActionHandler('play', ()=>{ if($('audioEl').paused) togglePlay(); });
-    navigator.mediaSession.setActionHandler('pause', ()=>{ if(!$('audioEl').paused) togglePlay(); });
-    navigator.mediaSession.setActionHandler('previoustrack', playPrev);
-    navigator.mediaSession.setActionHandler('nexttrack', playNext);
-    navigator.mediaSession.setActionHandler('stop', ()=>{ $('audioEl').pause(); });
-    try{
-      navigator.mediaSession.setActionHandler('seekbackward', (d)=>{ $('audioEl').currentTime=Math.max(0,$('audioEl').currentTime-(d.seekOffset||10)); });
-      navigator.mediaSession.setActionHandler('seekforward', (d)=>{ $('audioEl').currentTime=Math.min($('audioEl').duration||0,$('audioEl').currentTime+(d.seekOffset||10)); });
-    }catch(e){}
-    try{
-      navigator.mediaSession.setActionHandler('seekto', (d)=>{ if(d.seekTime!=null) $('audioEl').currentTime=d.seekTime; });
-    }catch(e){}
-  }catch(e){ console.error('MediaSession:',e); }
+    navigator.mediaSession.metadata = new MediaMetadata({title:s.title,artist:uname,album:'MyMusic',artwork:art});
+    navigator.mediaSession.setActionHandler('play',()=>{if($('audioEl').paused)togglePlay();});
+    navigator.mediaSession.setActionHandler('pause',()=>{if(!$('audioEl').paused)togglePlay();});
+    navigator.mediaSession.setActionHandler('previoustrack',playPrev);
+    navigator.mediaSession.setActionHandler('nexttrack',playNext);
+    navigator.mediaSession.setActionHandler('stop',()=>{$('audioEl').pause();});
+    try{navigator.mediaSession.setActionHandler('seekbackward',(d)=>{$('audioEl').currentTime=Math.max(0,$('audioEl').currentTime-(d.seekOffset||10));});}catch(e){}
+    try{navigator.mediaSession.setActionHandler('seekforward',(d)=>{$('audioEl').currentTime=Math.min($('audioEl').duration||0,$('audioEl').currentTime+(d.seekOffset||10));});}catch(e){}
+    try{navigator.mediaSession.setActionHandler('seekto',(d)=>{if(d.seekTime!=null)$('audioEl').currentTime=d.seekTime;});}catch(e){}
+  }catch(e){console.error('MediaSession:',e);}
 }
 function updateMediaSessionState(){
   if(!('mediaSession' in navigator)) return;
-  try{ navigator.mediaSession.playbackState = $('audioEl').paused ? 'paused' : 'playing'; }catch(e){}
+  try{navigator.mediaSession.playbackState=$('audioEl').paused?'paused':'playing';}catch(e){}
+}
+
+/* ===== CHAT ===== */
+let CHAT_LIST=[];
+let CHAT_FRIEND=null;
+let CHAT_MESSAGES=[];
+let chatPollTimer=null;
+let unreadPollTimer=null;
+
+function fmtChatTime(ts){
+  const d=new Date(ts);const now=new Date();const diff=now-d;
+  if(diff<60*1000)return 'เมื่อกี้';
+  if(diff<60*60*1000)return Math.floor(diff/60000)+' น.';
+  if(diff<24*60*60*1000)return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
+  return d.getDate()+'/'+(d.getMonth()+1);
+}
+async function renderChatScreen(){
+  try{
+    const r=await fetch('/api/chat/list?user='+encodeURIComponent(MY)).then(x=>x.json());
+    CHAT_LIST=r.list||[];
+  }catch(e){CHAT_LIST=[];}
+  renderChatList();
+}
+function renderChatList(){
+  const q=($('chatSearch')?$('chatSearch').value:'').trim().toLowerCase();
+  const filtered=CHAT_LIST.filter(c=>{
+    if(!q)return true;
+    const u=USERS[c.friend];
+    return c.friend.toLowerCase().includes(q)||(u&&(u.name||'').toLowerCase().includes(q));
+  });
+  const list=$('chatList');
+  if(!filtered.length){
+    list.innerHTML='<p class="small" style="text-align:center;padding:40px 20px;">ยังไม่มีเพื่อนในแชท<br><span style="font-size:11px;opacity:0.7;display:block;margin-top:8px;">ติดตามกันและกันเพื่อเริ่มแชท</span></p>';
+    return;
+  }
+  list.innerHTML=filtered.map(c=>{
+    const u=USERS[c.friend];
+    if(!u)return '';
+    const last=c.lastMsg;
+    let preview='เริ่มแชทใหม่';
+    if(last){
+      if(last.type==='text')preview=last.text;
+      else if(last.type==='image')preview='📷 รูปภาพ';
+      else if(last.type==='video')preview='🎬 วิดีโอ';
+      else if(last.type==='audio')preview='🎵 เสียง';
+      else preview='📎 ไฟล์';
+    }
+    const fromMe=last&&last.from===MY;
+    const time=last?fmtChatTime(last.ts):'';
+    return '<div class="chatRow" onclick="openChatRoom(\''+c.friend+'\')">'+
+      '<div style="position:relative;flex-shrink:0;">'+
+        '<img src="'+(u.avatar||'')+'">'+
+        (c.unread?'<span class="chatRowBadge">'+(c.unread>99?'99+':c.unread)+'</span>':'')+
+      '</div>'+
+      '<div class="chatRowInfo">'+
+        '<div class="chatRowName">'+renderName(c.friend)+'</div>'+
+        '<div class="chatRowPreview">'+(fromMe?'คุณ: ':'')+escapeHTML(preview)+'</div>'+
+      '</div>'+
+      '<div class="chatRowMeta">'+time+'</div>'+
+    '</div>';
+  }).join('');
+}
+async function openChatRoom(friend){
+  CHAT_FRIEND=friend;
+  const u=USERS[friend];
+  $('cr_avatar').src=(u&&u.avatar)||'';
+  $('cr_name').innerHTML=renderName(friend);
+  $('chatRoom').classList.add('active');
+  await loadChatMessages();
+  await fetch('/api/chat/read',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:MY,friend})});
+  updateUnreadBadge();
+  if(chatPollTimer)clearInterval(chatPollTimer);
+  chatPollTimer=setInterval(loadChatMessages,4000);
+}
+async function loadChatMessages(){
+  if(!CHAT_FRIEND)return;
+  try{
+    const r=await fetch('/api/chat/messages?user='+encodeURIComponent(MY)+'&friend='+encodeURIComponent(CHAT_FRIEND)).then(x=>x.json());
+    CHAT_MESSAGES=r.messages||[];
+  }catch(e){return;}
+  renderChatMessages();
+  const hasUnread=CHAT_MESSAGES.some(m=>m.to===MY&&!m.read);
+  if(hasUnread){
+    try{await fetch('/api/chat/read',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:MY,friend:CHAT_FRIEND})});}catch(e){}
+  }
+}
+function renderChatMessages(){
+  const box=$('chatMessages');
+  if(!CHAT_MESSAGES.length){
+    box.innerHTML='<p class="small" style="text-align:center;padding:40px;">เริ่มบทสนทนาได้เลย</p>';
+    return;
+  }
+  const wasBottom=box.scrollHeight-box.scrollTop-box.clientHeight<100;
+  box.innerHTML=CHAT_MESSAGES.map(m=>{
+    const mine=m.from===MY;
+    let content;
+    if(m.type==='image')content='<img class="chatImg" src="'+m.url+'" onclick="window.open(\''+m.url+'\',\'_blank\')">';
+    else if(m.type==='video')content='<video class="chatVideo" controls src="'+m.url+'"></video>';
+    else if(m.type==='audio')content='<audio class="chatAudio" controls src="'+m.url+'"></audio>';
+    else content=escapeHTML(m.text);
+    const d=new Date(m.ts);
+    const time=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
+    return '<div class="chatBubble '+(mine?'mine':'them')+'"><div class="chatBubbleInner">'+content+'</div><div class="chatBubbleTime">'+time+'</div></div>';
+  }).join('');
+  if(wasBottom)box.scrollTop=box.scrollHeight;
+}
+function closeChatRoom(){
+  CHAT_FRIEND=null;CHAT_MESSAGES=[];
+  $('chatRoom').classList.remove('active');
+  if(chatPollTimer){clearInterval(chatPollTimer);chatPollTimer=null;}
+  renderChatScreen();
+}
+function viewChatFriend(){
+  if(!CHAT_FRIEND)return;
+  const f=CHAT_FRIEND;
+  closeChatRoom();
+  setTimeout(()=>showUserView(f),100);
+}
+async function sendChatText(){
+  const inp=$('chatTextInput');
+  const text=inp.value.trim();
+  if(!text||!CHAT_FRIEND)return;
+  inp.value='';
+  try{
+    const r=await fetch('/api/chat/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from:MY,to:CHAT_FRIEND,text,type:'text'})}).then(x=>x.json());
+    if(!r.ok){toast(r.msg,'error');return;}
+    await loadChatMessages();
+  }catch(e){toast('ส่งไม่สำเร็จ','error');}
+}
+async function sendChatFile(input){
+  const file=input.files[0];
+  if(!file||!CHAT_FRIEND){input.value='';return;}
+  input.value='';
+  if(file.size>40*1024*1024){toast('ไฟล์ใหญ่เกิน 40MB','error');return;}
+  let type='file';
+  if(file.type.startsWith('image/'))type='image';
+  else if(file.type.startsWith('video/'))type='video';
+  else if(file.type.startsWith('audio/'))type='audio';
+  toast('กำลังส่ง...','info');
+  const fd=new FormData();
+  fd.append('from',MY);
+  fd.append('to',CHAT_FRIEND);
+  fd.append('text','');
+  fd.append('type',type);
+  fd.append('file',file);
+  try{
+    const r=await fetch('/api/chat/send',{method:'POST',body:fd}).then(x=>x.json());
+    if(!r.ok){toast(r.msg,'error');return;}
+    await loadChatMessages();
+  }catch(e){toast('ส่งไม่สำเร็จ','error');}
+}
+async function updateUnreadBadge(){
+  if(!MY)return;
+  try{
+    const r=await fetch('/api/chat/unread?user='+encodeURIComponent(MY)).then(x=>x.json());
+    const badge=$('chatBadge');
+    if(!badge)return;
+    const cnt=r.count||0;
+    if(cnt>0){badge.textContent=cnt>99?'99+':cnt;badge.classList.add('show');}
+    else{badge.classList.remove('show');}
+  }catch(e){}
+}
+function startUnreadPolling(){
+  if(unreadPollTimer)clearInterval(unreadPollTimer);
+  updateUnreadBadge();
+  unreadPollTimer=setInterval(updateUnreadBadge,15000);
+}
+function openChatFromProfile(){
+  if(!CURRENT_PROFILE)return;
+  const f=CURRENT_PROFILE;
+  const me=currentUser();
+  const other=USERS[f];
+  if(!me.following.includes(f)||!(other.following||[]).includes(MY)){
+    toast('ต้องติดตามกันและกันก่อน','error');
+    return;
+  }
+  switchScreen('home');
+  setTimeout(()=>openChatRoom(f),100);
 }
 
 async function adminBan(target,banned){
@@ -1131,7 +1343,7 @@ function renderProfile(){
   if(isPrem){
     const until=new Date(myEmailInfo.premiumUntil||0);
     const dateStr=until.toLocaleDateString('th-TH');
-    premBox.innerHTML='<div class="emailBox"><div class="emailStatus gold"><div class="emIcon">'+ICON_PREMIUM+'</div><div class="emTxt"><div class="emMain">พรีเมี่ยม</div><div class="emSub">หมดอายุ '+dateStr+'</div></div></div></div>';
+    premBox.innerHTML='<div class="emailBox"><div style="font-weight:700">พรีเมี่ยม</div><div class="small">หมดอายุ '+dateStr+'</div></div>';
     $('colorSection').style.display='block';
     if(myEmailInfo.nameColor)$('nameColorInput').value=myEmailInfo.nameColor;
   } else {
@@ -1182,14 +1394,18 @@ function showFollowingList(){
 }
 function showUserView(username){
   const u=USERS[username];if(!u)return;
+  CURRENT_PROFILE=username;
   $('uv_avatar').src=u.avatar||'';
   $('uv_name').innerHTML=renderName(username);
   $('uv_followers').textContent=u.followers.length;
   $('uv_songs').textContent=(u.songs||[]).length;
   const isF=currentUser().following.includes(username);
-  $('uv_followBtn').textContent=username===MY?'':(isF?'ติดตามแล้ว':'ติดตาม');
+  const isMe=username===MY;
+  $('uv_followBtn').textContent=isMe?'':(isF?'ติดตามแล้ว':'ติดตาม');
   $('uv_followBtn').dataset.target=username;
-  $('uv_followBtn').style.display=username===MY?'none':'inline-flex';
+  $('uv_followBtn').style.display=isMe?'none':'inline-flex';
+  const mutual=isF&&((u.following||[]).includes(MY));
+  $('uv_chatBtn').style.display=(isMe||!mutual)?'none':'inline-flex';
   const songs=SONGS.filter(s=>s.uploader===username);
   $('uv_list').innerHTML=songs.length?songs.map(gridCardHTML).join(''):'<p class="small" style="grid-column:1/-1;">ยังไม่มีเพลง</p>';
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
